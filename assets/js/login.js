@@ -5,56 +5,64 @@ $(function () {
   $('#link_reg').on('click', function () {
     $('.login-box').hide()
     $('.reg-box').show()
-    // $('#form_reg').reset()
-    // $('#form_login').reset()
+    $('#form_login')[0].reset()
+    $('#form_reg')[0].reset()
   })
   $('#link_login').on('click', function () {
     $('.reg-box').hide()
     $('.login-box').show()
-    // $('#form_reg').reset()
-    // $('#form_login').reset()
+    $('#form_login')[0].reset()
+    $('#form_reg')[0].reset()
   })
-
+  var layer = layui.layer // 生成layer对象 之后要调用这个对象下的msg提示框
   // 表单验证 
   layui.form.verify({
-    uname: [/^[\\u4e00-\\u9fa5_a-zA-Z0-9-]{1,16}$/, '限16个字符，支持中英文、数字、减号或下划线'],
     pwd: [
       /^[\S]{6,12}$/
       , '密码必须6到12位，且不能出现空格'
     ],
     repwd: function (value) {
-      var pwd = $('.reg-box [name=password]').val()
-      if (pwd !== value) return '两次密码不一致哦哦'
+      var val = $('#form_reg [name=password]').val()
+      if (value !== val) {
+        // layer.msg('只想弱弱提示');
+        return '两次密码不一致哦哦哦哦哦，垃圾'
+      }
     }
   })
 
-  var layer = layui.layer
-
-  //表单的注册事件
+  //注册账号
   $('#form_reg').on('submit', function (e) {
     e.preventDefault()
-
-    $.post('/api/reguser', {
-      username: $('.reg-box [name=username]').val(),
-      password: $('.reg-box [name=password]').val()
-    }, function (res) {
-      if (res.status == 1) return layer.msg(res.message, { icon: 5 })
-      layer.msg(res.message, { icon: 6 })
-      $('#link_login').click()
-
+    var uname = $('#form_reg [name=username]').val()
+    var pwd = $('#form_reg [name=password]').val()
+    $.post('/api/reguser', { username: uname, password: pwd }, function (res) {
+      if (res.status !== 0) return layer.msg(res.message, { // msg提示框
+        time: 1000
+      })
+      layer.msg(res.message, {
+        time: 1000
+      })
+      setTimeout(function () {
+        $('#link_login').click()
+      }, 300)
     })
+
   })
 
-  // 登录
+
+  // 登录账号
   $('#form_login').on('submit', function (e) {
     e.preventDefault()
+    $.post('/api/login', $('#form_login').serialize(), function (res) {
 
-    $.post('/api/login', $(this).serialize(), function (res) {
-      if (res.status == 1) return layer.msg(res.message, { icon: 5 })
-      layer.msg(res.message, { icon: 6 })
-      localStorage.setItem('token', res.token)
-      location.href = "/index.html"
+      if (res.status !== 0) return layer.msg(res.message, { time: 1000 })  // msg提示框
+      localStorage.setItem('token', res.token) // 将用户令牌token保存到localStorage中 
+      layer.msg(res.message, { time: 700 })
+
+
+      setTimeout(() => {
+        location.href = '/index.html'
+      }, 700)
     })
   })
-
-})
+})  
