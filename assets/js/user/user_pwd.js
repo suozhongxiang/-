@@ -1,6 +1,21 @@
 $(function () {
 
   var layer = layui.layer
+  var form = layui.form
+
+  form.verify({
+    pwd: [
+      /^[\S]{6,12}$/
+      , '密码必须6到12位，且不能出现空格'
+    ],
+    samePwd: function (val) {
+      if ($('#setPwd [name=oldPwd]').val() === val) return '不能和原密码一致哦哦'
+    },
+    rePwd: function (val) {
+      if ($('#setPwd [name=newPwd]').val() !== val) return '两次输入密码不一致哦'
+
+    }
+  })
   $('#setPwd').on('submit', function (e) {
     e.preventDefault()
     var newPwd = $('#setPwd [name=newPwd]').val()

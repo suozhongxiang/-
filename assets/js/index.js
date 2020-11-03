@@ -18,10 +18,10 @@ $(function () {
 })
 // 获取插件的layer对象 后期需要做弹出框
 var layer = layui.layer
-function getUserInfo() {
 
-
+function getUserInfo(dom) {
   // 发起ajax请求 获取用户信息 token判断登录状态
+
   $.ajax({
     method: 'GET',
     url: '/my/userinfo',
@@ -33,17 +33,20 @@ function getUserInfo() {
       if (res.status !== 0) return layer.msg(res.message, { // msg提示框
         time: 1000
       })
-      console.log(res.data);
-      renderUserImg(res.data)
+
+
+      renderUserImg(res.data, dom)
     },
     // 通过获取失败或成功都会执行的回调函数来执行防止无token情况下的偷摸登录操作
 
   })
+
+
 }
 
 
 // 渲染用户信息
-function renderUserImg(data) {
+function renderUserImg(data, dom) {
 
   // 给要展示的名称赋值
   var name = data.nickname || data.username
@@ -54,8 +57,10 @@ function renderUserImg(data) {
   if (data.user_pic) {
     $('.text-avatar').hide()
     $('.layui-nav-img').show()
-    $('.layui-nav-img')[0].src = data.user_pic
 
+    $('.layui-nav-img').prop('src', data.user_pic)
+
+    dom && dom.prop('src', data.user_pic)
   } else {
     $('.layui-nav-img').hide()
     $('.text-avatar').show()
