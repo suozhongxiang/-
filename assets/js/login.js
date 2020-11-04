@@ -8,12 +8,14 @@ $(function () {
     $('#form_login')[0].reset()
     $('#form_reg')[0].reset()
   })
+
   $('#link_login').on('click', function () {
     $('.reg-box').hide()
     $('.login-box').show()
     $('#form_login')[0].reset()
     $('#form_reg')[0].reset()
   })
+
   var layer = layui.layer // 生成layer对象 之后要调用这个对象下的msg提示框
   // 表单验证 
   layui.form.verify({
@@ -51,6 +53,7 @@ $(function () {
 
 
   // 登录账号
+
   $('#form_login').on('submit', function (e) {
     e.preventDefault()
     $.post('/api/login', $('#form_login').serialize(), function (res) {
@@ -65,4 +68,5 @@ $(function () {
       }, 700)
     })
   })
+
 })  

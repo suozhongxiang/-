@@ -12,26 +12,22 @@ $(function () {
   // 1.3 创建裁剪区域
   $image.cropper(options)
 
-  var layer = layui.layer
   $('#btnChooseImage').on('click', function () {
-    $('#file').click()
 
+    $('#file').click()
   })
 
   $('#file').on('change', function (e) {
-    var files = e.target.files
-    if (files.length === 0) return layer.msg('没有上传文件哦', { // msg提示框
-      time: 1000
-    })
-
+    // 获取文件域中第一个文件对象 
     var file = e.target.files[0]
     var newImgURL = URL.createObjectURL(file)
+
     $image
       .cropper('destroy')      // 销毁旧的裁剪区域
       .attr('src', newImgURL)  // 重新设置图片路径
       .cropper(options)        // 重新初始化裁剪区域
-  })
 
+  })
   $('#btnUpload').on('click', function () {
 
     var dataURL = $image
@@ -39,8 +35,9 @@ $(function () {
         width: 100,
         height: 100
       })
-      .toDataURL('image/png')  // 将 Canvas 画布上的内容，转化为 base64 格式的字符串
+      .toDataURL('image/png')       // 将 Canvas 画布上的内容，转化为 base64 格式的字符串
 
+    // 发起请求 替换头像
     $.ajax({
       method: 'POST',
       url: '/my/update/avatar',
@@ -51,17 +48,13 @@ $(function () {
         if (res.status !== 0) return layer.msg(res.message, { // msg提示框
           time: 1000
         })
-
-        layer.msg(res.message, { // msg提示框
+        layer.msg(res.message, {
           time: 1000
         })
-
-        window.parent.getUserInfo($('#image'))
-
-
+        window.parent.getUserInfo()
       }
     })
+
+
   })
-
-
 })
